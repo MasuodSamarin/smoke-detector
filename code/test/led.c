@@ -9,7 +9,7 @@
 |
 ================================================*/
 #ifndef F_CPU
-#define F_CPU 16000000UL // or whatever may be your frequency
+#define F_CPU 8000000UL // or whatever may be your frequency
 #endif
  
 #include <avr/io.h>                    // adding header files
@@ -17,15 +17,15 @@
  
 int main(void)
 {
-   DDRC = 0x01;                       // setting DDR of PORT C
+   DDRD = 0xff;                       // setting DDR of PORT C
    while(1)
    {
        // LED on
-       PORTC = 0b00000001;            // PC0 = High = LED attached on PC0 is ON
-       _delay_ms(500);                // wait 500 milliseconds
+       //PORTD = 0xff;            // PC0 = High = LED attached on PC0 is ON
+       _delay_ms(300);                // wait 500 milliseconds
  
        //LED off
-       PORTC = 0b00000000;            // PC0 = Low = LED attached on PC0 is OFF
-       _delay_ms(500);                // wait 500 milliseconds
+       PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
+       _delay_ms(200);                // wait 500 milliseconds
    }
 }
