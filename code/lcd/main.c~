@@ -89,10 +89,10 @@ int main(void)
         
         // LED on
         //PORTD = 0x80;            // PC0 = High = LED attached on PC0 is ON
-       // _delay_ms(500);                // wait 500 milliseconds
+        _delay_ms(500);                // wait 500 milliseconds
  
         //LED off
-        //PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
-        _delay_ms(50);                // wait 500 milliseconds
+        PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
+        _delay_ms(500);                // wait 500 milliseconds
     }
 }

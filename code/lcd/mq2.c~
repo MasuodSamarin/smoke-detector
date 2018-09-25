@@ -125,7 +125,7 @@ float ReadSensor()
  
   for (i=0;i<5;i++) {                                 // take multiple readings and average it.
     rs += ResistanceCalculation(ADC_read(0));   // rs changes according to gas concentration.
-    _delay_ms(100);
+    _delay_ms(50);
   }
  
   rs = rs/5;

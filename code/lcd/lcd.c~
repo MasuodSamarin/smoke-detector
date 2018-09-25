@@ -10,7 +10,6 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/iom32.h>
-#include <stdio.h>
 #include "lcd.h"
 
 void DataPinChange(uint8_t LCD_Pin , uint8_t State) //Change LCD Data pin state (HIGH or LOW)
