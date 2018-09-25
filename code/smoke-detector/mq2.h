@@ -22,10 +22,6 @@ extern float SmokeCurve[3];// = {2.3,0.53,-0.43};    //two points from smoke cur
                                                     //data format:{ x, y, slope};
 														                                                  
 extern float Ro;// = 10;  //Ro is initialized to 10 kilo ohms
- 
-void ADC_init ();
-uint16_t ADC_read (uint8_t channel);
-void init_mq2(void);
 
 
 int  GetPercentage(float rs_ro_ratio, float *pcurve);

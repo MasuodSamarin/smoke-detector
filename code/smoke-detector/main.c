@@ -21,25 +21,63 @@ int res;
 #include <avr/io.h>
 #include <string.h>
 #include <util/delay.h>
+
+#include "adc.h"
 #include "lcd.h"
 #include "keypad.h"
 #include "mq2.h"
+#include "lm35.h"
+#include "output.h"
 
 
 void keypad_test(void);
 void mq2_test(void);
+void output_test(void);
+void lm35_test(void);
+
 
 int main(void)
 
 {
 
-        keypad_test();
-        //mq2_test();      
-
-      
+        //keypad_test();
+        //mq2_test();
+        //output_test();      
+        lm35_test();       
        
 }
+   
+void lm35_test(void){
+        ADC_init();
+        LCD4_Init();
+        LCD4_Clear();
+        LCD4_Set_Cursor(1, 1);
+        LCD4_Write_String("temp: ");
+
+        while(1){
+                float t = lm35_get_temp();
+                /*LCD4_Clear();
+                LCD4_Set_Cursor(1, 1);
+                LCD4_Write_String("temp: ");
+                LCD4_Write_Float(t);*/
+                _delay_ms(1000);
+        }
+}
+   
+void output_test(void){
+
+        output_init();
+
+        while(1){
+                relay_on();
+                buzzer_on();
+                _delay_ms(1000);
+                relay_off();
+                buzzer_off();
+                _delay_ms(1000);
+        }
       
+}
 
 void keypad_test(void){
 
@@ -85,30 +123,37 @@ void mq2_test(void){
         LCD4_Init();
         LCD4_Clear();
         LCD4_Set_Cursor(1, 1);
-        LCD4_Write_String("Calib MQ2 ...");
+        LCD4_Write_String("Calib Ro ...");
 
         ADC_init();
 
-        Ro = SensorCalibration();                       //Please make sure the sensor is in clean air 
+        Ro = SensorCalibration();     //Please make sure the sensor is in clean air 
 
         LCD4_Clear();
         LCD4_Set_Cursor(1, 1);
         LCD4_Write_String("Ro: ");
         LCD4_Write_Float(Ro);
+        LCD4_Write_String("  K-ohm");
 
-
-        _delay_ms(2000);
+        _delay_ms(1000);
 
         while(1)
         {
     
-                float read = GetGasPercentage(ReadSensor()/Ro,SMOKE);
-                read = (ReadSensor());
+                float smoke = GetGasPercentage(ReadSensor()/Ro,SMOKE);
+                float lpg = GetGasPercentage(ReadSensor()/Ro,LPG);
 
-                LCD4_Clear();
-                LCD4_Set_Cursor(0, 0);
-                LCD4_Write_String("READ: ");
-                LCD4_Write_Float(read);
+
+                //LCD4_Clear();
+                //LCD4_Set_Cursor(1, 1);
+                //LCD4_Write_String("              ");
+                LCD4_Set_Cursor(1, 1);
+                LCD4_Write_String("S=");
+                LCD4_Write_Float(smoke);
+
+                //LCD4_Set_Cursor(1, 6);
+                LCD4_Write_String("   L=");
+                LCD4_Write_Float(lpg);
 
         }
 }

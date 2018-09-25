@@ -5,7 +5,11 @@
 
 #include <avr/io.h>
 #include <util/delay.h>                // for _delay_ms()
+#include "adc.h"
 #include "mq2.h"
+
+
+
 /*
 extern float LPGCurve[3];// = {2.3,0.20,-0.45};   //two points from LPG curve are taken point1:(200,1.6) point2(10000,0.26)
                                                     //take log of each point (lg200, lg 1.6)=(2.3,0.20)  (lg10000,lg0.26)=(4,-0.58)
@@ -21,45 +25,15 @@ float Ro;// = 5;  //Ro is initialized to 10 kilo ohms
  
 */
 
- 
+ /*
 int  GetPercentage(float rs_ro_ratio, float *pcurve);
 int GetGasPercentage(float rs_ro_ratio, int gas_id);
 float ReadSensor();
 float ResistanceCalculation(int raw_adc);
 float SensorCalibration();
 
+*/
 
-void ADC_init (void)
-{
-	ADMUX = 0x00;
-	ADMUX &= ~(1<<ADLAR);
-	ADMUX |=(1<<REFS0)|(1<<REFS1);
-	ADCSRA = 0x00;
-	ADCSRA |= (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(0<<ADPS0);
-}
-
-void ADC_start (void)
-{
-	ADCSRA |= (1<<ADSC);
-}
-
-uint16_t ADC_read (uint8_t channel)
-{
-	ADMUX &= 0b01100000;
-	ADMUX |=channel;
-	
-	ADC_start();
-	
-	uint16_t value = 0;
-	while (!(ADCSRA&(1<<ADIF)));
-	value = ADCL;
-	value += (ADCH<<8);
-	return value;
-}
-
-void init_mq2(void){
-	ADC_init();
-}
 
 /* 
 int main(void)
