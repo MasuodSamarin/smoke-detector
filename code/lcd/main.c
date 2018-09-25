@@ -42,7 +42,7 @@ int main(void)
 {
 
     DDRB = 0xff;                       // setting DDR of PORT B
-    DDRD = 0xff;                       // setting DDR of PORT B
+
     //DDRA = 0x00;                       // setting DDR of PORT A
 
     LCD4_Init();
@@ -92,14 +92,17 @@ int main(void)
         
 
   */     
+/*
+        DDRD = 0xff;                       // setting DDR of PORT B
+
+        LED on
+        PORTD = 0x80;            // PC0 = High = LED attached on PC0 is ON
+        _delay_ms(500);                // wait 500 milliseconds
+
+        LED off
+        PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
+        _delay_ms(50);                // wait 500 milliseconds
         
-        
-        // LED on
-        //PORTD = 0x80;            // PC0 = High = LED attached on PC0 is ON
-       // _delay_ms(500);                // wait 500 milliseconds
- 
-        //LED off
-        //PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
-        _delay_ms(100);                // wait 500 milliseconds
+*/
     }
 }
