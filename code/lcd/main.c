@@ -60,7 +60,7 @@ int main(void)
     LCD4_Write_Float(Ro);
 
 
-    _delay_ms(2000);
+    _delay_ms(000);
 
     while(1)
     {
@@ -68,14 +68,21 @@ int main(void)
 
 
 
-        float read = GetGasPercentage(ReadSensor()/Ro,SMOKE);
-        read = (ReadSensor());
+        float smoke, lpg, ratio;
         
-        LCD4_Clear();
-        LCD4_Set_Cursor(0, 0);
-        LCD4_Write_String("READ: ");
-        LCD4_Write_Float(read);
-
+        ratio = ReadSensor()/Ro;
+        smoke = GetGasPercentage(ratio, SMOKE);
+        lpg = GetGasPercentage(ratio, LPG);
+        
+        //LCD4_Clear();
+        LCD4_Set_Cursor(1, 1);
+        LCD4_Write_String("smoke: ");
+        LCD4_Write_Float(smoke);
+        LCD4_Write_String(" ppm");
+        LCD4_Set_Cursor(2, 1);
+        LCD4_Write_String("lpg: ");
+        LCD4_Write_Float(lpg);
+        LCD4_Write_String(" ppm");
 /* 
         LCD4_Set_Cursor(2, 0);
         int adc1 = ADC_read(1);
@@ -93,6 +100,6 @@ int main(void)
  
         //LED off
         //PORTD = 0x00;            // PC0 = Low = LED attached on PC0 is OFF
-        _delay_ms(50);                // wait 500 milliseconds
+        _delay_ms(100);                // wait 500 milliseconds
     }
 }

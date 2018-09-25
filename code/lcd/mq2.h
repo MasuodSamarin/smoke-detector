@@ -28,8 +28,8 @@ uint16_t ADC_read (uint8_t channel);
 void init_mq2(void);
 
 
-int  GetPercentage(float rs_ro_ratio, float *pcurve);
-int GetGasPercentage(float rs_ro_ratio, int gas_id);
+float  GetPercentage(float rs_ro_ratio, float *pcurve);
+float GetGasPercentage(float rs_ro_ratio, int gas_id);
 float ReadSensor();
 float ResistanceCalculation(int raw_adc);
 float SensorCalibration();
