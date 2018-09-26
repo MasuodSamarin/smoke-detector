@@ -13,36 +13,45 @@
 
 float lm35_get_temp(void){
         
-        uint32_t A0, A1, i;
+        long int A1, A2, i;
         float temp;
         
-        const int factor = 50;
-  
-        for (i=0;i<factor;i++) {  //take multiple samples and calculate the average value
+        const int cnt = 5;
+        
+        A1=0;
+        for (i=0;i<cnt;i++) {  //take multiple samples and calculate the average value
           
-                A0 += ADC_read(LM35_ch1);
+                A1 += ADC_read(3);
                 _delay_ms(5);
         }
-        A0 = A0/factor;  
-                        
-        for (i=0;i<factor;i++) {  //take multiple samples and calculate the average value
+        A1 = A1/(cnt);  
+        
+        A2=0;                
+        for (i=0;i<cnt;i++) {  //take multiple samples and calculate the average value
           
-                A1 += ADC_read(LM35_ch2);
+                A2 += ADC_read(4);
                 _delay_ms(5);
         }
-        A1 = A1/factor;                         
-       
-        temp = (float)(A0 - A1) * temp_factor;
+        A2 = A2/(cnt);                         
+   
+
+        
+        //A1 = ADC_read(1);
+        //A2 = ADC_read(2);
+        
+        temp = (float)(A1 - A2);
         
         LCD4_Clear();
+        
         LCD4_Set_Cursor(1, 1);
-        LCD4_Write_String("A0= ");
-        LCD4_Write_Int(A0);
-        LCD4_Write_String("  A1= ");
-        LCD4_Write_Int(A1);
+        LCD4_Write_String("A1=");
+        LCD4_Write_Float(A1 * temp_factor);
+               
         LCD4_Set_Cursor(2, 1);
-        LCD4_Write_Int((A0 - A1));
-        LCD4_Write_String("     ");
+        LCD4_Write_String("A2=");
+        LCD4_Write_Float(A2 * temp_factor);
+        
+
         return temp;
         
 }

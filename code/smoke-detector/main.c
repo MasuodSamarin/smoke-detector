@@ -40,6 +40,7 @@ int main(void)
 
 {
 
+
         //keypad_test();
         //mq2_test();
         //output_test();      
@@ -50,6 +51,7 @@ int main(void)
 void lm35_test(void){
         ADC_init();
         LCD4_Init();
+
         LCD4_Clear();
         LCD4_Set_Cursor(1, 1);
         LCD4_Write_String("temp: ");
