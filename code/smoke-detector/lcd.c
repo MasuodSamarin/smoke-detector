@@ -112,6 +112,8 @@ void LCD4_Set_Cursor(uint8_t Row, uint8_t Column)	//Set cursor of LCD depending 
 
 void LCD4_Init()									//Initialize LCD (This function is first called in main() )
 {
+        /*TODO:
+                change the DDRB and other stuff*/
         DDRB = 0xff;                       // setting DDR of PORT B
 	LCD4_Port(0x00);
 	_delay_ms(20);

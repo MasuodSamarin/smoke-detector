@@ -28,6 +28,7 @@ int res;
 #include "mq2.h"
 #include "lm35.h"
 #include "output.h"
+#include "menu.h"
 
 
 void keypad_test(void);
@@ -41,8 +42,8 @@ int main(void)
 {
 
 
-        //keypad_test();
-        mq2_test();
+        keypad_test();
+        //mq2_test();
         //output_test();      
         //lm35_test();       
        
@@ -128,8 +129,8 @@ void mq2_test(void){
         while(1)
         {
     
-                float smoke = GetGasPercentage(ReadSensor()/Ro,SMOKE);
-                float lpg = GetGasPercentage(ReadSensor()/Ro,LPG);
+                float smoke = GetGasPercentage(ReadSensor()/Ro, SMOKE);
+                float lpg = GetGasPercentage(ReadSensor()/Ro, LPG);
                 float temp = lm35_get_temp()/10;
 
                 //LCD4_Clear();

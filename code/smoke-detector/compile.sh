@@ -1,7 +1,9 @@
 #rm *.o *.hex *.elf *~
+SRC="menu.c adc.c lm35.c output.c keypad.c lcd.c mq2.c main.c"
+OBJ="menu.o adc.o lm35.o output.o keypad.o lcd.o mq2.o main.o"
 
-avr-gcc -g -Os -mmcu=atmega32 -c  adc.c lm35.c output.c keypad.c lcd.c mq2.c main.c
-avr-gcc -g -mmcu=atmega32 -o smoke.elf adc.o lm35.o output.o keypad.o lcd.o mq2.o main.o
+avr-gcc -g -Os -mmcu=atmega32 -c $SRC
+avr-gcc -g -mmcu=atmega32 -o smoke.elf $OBJ
 avr-objcopy -j .text -j .data -O ihex smoke.elf smoke.hex
 avr-size --format=avr --mcu=atmega32 smoke.elf
 
