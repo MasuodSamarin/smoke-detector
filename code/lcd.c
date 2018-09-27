@@ -131,6 +131,9 @@ void LCD4_Init()									//Initialize LCD (This function is first called in main
 	LCD4_Command(0x0C);
 	LCD4_Command(0x00);
 	LCD4_Command(0x06);
+	
+	LCD4_Clear();
+        LCD4_Set_Cursor(1, 1);         // Go to the location 1,1 of lcd
 }
 
 void LCD4_Write_Char(uint8_t Character)				//Write a character to LCD

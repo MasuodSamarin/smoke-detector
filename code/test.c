@@ -16,6 +16,9 @@
 #include "test.h"
 
 
+extern Data_typedef g_data;
+extern Menu_typedef g_menu;
+
 void output_test(void){
 
         output_init();
@@ -47,12 +50,12 @@ void keypad_test(void){
 
 
         keypadInit();
-        char *chr;
+        char chr;
 
         while(1){
                 chr = keypadScan();
                 if (chr){
-                        LCD4_Write_String(chr);
+                        LCD4_Write_Char(chr);
                         key++;
                         _delay_ms(100);
                 }
@@ -79,7 +82,7 @@ void mq2_test(void){
         LCD4_Set_Cursor(1, 1);
         LCD4_Write_String("Calib Ro ...");
 
-        Ro = SensorCalibration();     //Please make sure the sensor is in clean air 
+        g_data.Ro = SensorCalibration();     //Please make sure the sensor is in clean air 
         LCD4_Set_Cursor(2, 1);
         LCD4_Write_String("COMPLETED..");
         _delay_ms(1000);
@@ -87,15 +90,15 @@ void mq2_test(void){
         LCD4_Clear();
         LCD4_Set_Cursor(1, 1);
         LCD4_Write_String("Ro: ");
-        LCD4_Write_Float(Ro);
+        LCD4_Write_Float(g_data.Ro);
         LCD4_Write_String("  K-ohm");
         _delay_ms(1000);
 
         while(1)
         {
     
-                float smoke = GetGasPercentage(ReadSensor()/Ro, SMOKE);
-                float lpg = GetGasPercentage(ReadSensor()/Ro, LPG);
+                float smoke = GetGasPercentage(ReadSensor()/g_data.Ro, SMOKE);
+                float lpg = GetGasPercentage(ReadSensor()/g_data.Ro, LPG);
                 float temp = lm35_get_temp()/10;
 
                 //LCD4_Clear();
@@ -134,3 +137,29 @@ void lm35_test(void){
         }
 }
      
+     
+     
+void keypad_talk_back(void){
+        
+        static int cnt=0;
+        if(g_data.keypad_ready){
+                g_data.keypad_ready = 0;
+                cnt++;
+                //LCD4_Clear();
+                //LCD4_Set_Cursor(1, 1);
+                LCD4_Write_Char(g_data.keypad_last);
+                
+                //data->Ro = SensorCalibration(); 
+                //init_sys();
+                //LCD4_Set_Cursor(1, 13);
+                //LCD4_Write_String(msg_ok);
+                
+                _delay_ms(300);  
+        }
+        if(cnt > 15){
+                LCD4_Clear();
+                LCD4_Set_Cursor(1, 1);
+                cnt=0;        
+        }
+
+}

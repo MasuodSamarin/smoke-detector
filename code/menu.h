@@ -5,10 +5,10 @@
 
 typedef enum{
         MENU_1, //main menu
-        MENU_2, //set pass
-        MENU_3, //set tel
-        MENU_4, //set max ppm for lpg and smoke, also set max temp
-        MENU_5, //startup and loading info section. also, show welcome massege meanwhile 
+        MENU_2, //set pass //set tel
+        MENU_3, //set max ppm for lpg and smoke, also set max temp
+        MENU_4, //startup and loading info section. also, show welcome massege meanwhile 
+        MENU_5, 
         MENU_MAX
 }Menu_Select_typedef;
 
@@ -31,6 +31,12 @@ typedef struct{
         
         char lcd_line_1[16];
         char lcd_line_2[16];
+        
+        
+        float Ro;// = 10;  //Ro is initialized to 10 kilo ohms
+
+        char keypad_ready;
+        char keypad_last;
         
 }Data_typedef;
 
@@ -59,10 +65,17 @@ typedef struct{
 
 
 
-void welcome(Data_typedef *data);
+void welcome(void);
+void calib_mq2(void);
+int pass_query(void);
+int pass_set(void);
+int tel_set(void);
+int max_mq2_set(void);
+int max_lm35_set(void);
+void show_mq2_lm35(void);
 
-
-
+void state_machine(void);
+void set_state(void);
 
 /*
 menu_fp Menu_Functions[] = {

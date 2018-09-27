@@ -20,7 +20,7 @@ void keypadInit(void){
 
 }
 
-char* keypadScan(void){
+char keypadScan(void){
         int keypressed=0;//integer for storing matrix value
         
         if (keypadPIN != 0b11110000){
@@ -42,66 +42,66 @@ char* keypadScan(void){
                 switch (keypressed){
 
                         case keypadCode_0:
-                                return "0";
+                                return 0x30;
                         break;
                         case keypadCode_1:
-                                return "1";                       
+                                return 0x31;                       
                         break;
                                         
                         case keypadCode_2:
-                                return "2";
+                                return 0x32;
                         break;
                                         
                         case keypadCode_3:
-                                return "3";
+                                return 0x33;
                         break;
                                         
                         case keypadCode_4:
-                                return "4";
+                                return 0x34;
                         break;
                                         
                         case keypadCode_5:
-                                return "5";
+                                return 0x35;
                         break;
                                         
                         case keypadCode_6:
-                                return "6";
+                                return 0x36;
                         break;
                                         
                         case keypadCode_7:
-                                return "7";
+                                return 0x37;
                         break;
                                         
                         case keypadCode_8:
-                                return "8";
+                                return 0x38;
                         break;
                                         
                         case keypadCode_9:
-                                return "9";
+                                return 0x39;
                         break;
                                         
                         case keypadCode_A:
-                                return "A";
+                                return 0x41;
                         break;
                                         
                         case keypadCode_B:
-                                return "B";
+                                return 0x42;
                         break;
                         
                         case keypadCode_C:
-                                return "C";
+                                return 0x43;
                         break;
                                         
                         case keypadCode_D:
-                                return "D";
+                                return 0x44;
                         break;
                                         
                         case keypadCode_S:
-                                return "*";
+                                return 0x2A;
                         break;
                                         
                         case keypadCode_H:
-                                return "#";
+                                return 0x23;
                         break;                      
                 }
                
@@ -109,7 +109,7 @@ char* keypadScan(void){
                 keypadDDR ^=0b11111111;//shifting input and power port
                 _delay_ms(1);
                 keypadPORT ^= 0b11111111;//powering row pins of keypad
-                _delay_ms(220);
+                _delay_ms(1);
                     
         }else
                 return 0;

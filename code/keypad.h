@@ -34,6 +34,6 @@
 
 
 void keypadInit(void);
-char* keypadScan(void);
+char keypadScan(void);
 
 #endif

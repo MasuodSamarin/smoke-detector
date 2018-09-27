@@ -14,6 +14,12 @@ void output_init(void){
         OUTPUT_DDR = 0xff;
 }
 
+void buzzer_toggle(void){
+        
+        BUZZER_PORT ^= (1<<BUZZER_PIN);
+}
+
+
 void buzzer_on(void){
         
         BUZZER_PORT |= (1<<BUZZER_PIN);

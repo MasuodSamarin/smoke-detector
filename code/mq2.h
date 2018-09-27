@@ -21,7 +21,7 @@ extern float SmokeCurve[3];// = {2.3,0.53,-0.43};    //two points from smoke cur
                                                     //find the slope using these points. take point1 as reference   
                                                     //data format:{ x, y, slope};
 														                                                  
-extern float Ro;// = 10;  //Ro is initialized to 10 kilo ohms
+//extern float Ro;// = 10;  //Ro is initialized to 10 kilo ohms
 
 
 int  GetPercentage(float rs_ro_ratio, float *pcurve);
