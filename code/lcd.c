@@ -112,6 +112,9 @@ void LCD4_Set_Cursor(uint8_t Row, uint8_t Column)	//Set cursor of LCD depending 
 
 void LCD4_Init()									//Initialize LCD (This function is first called in main() )
 {
+        /*TODO:
+                change the DDRB and other stuff*/
+        LCD_CTRL_DIR = 0xff;                       // setting DDR of PORT B
 	LCD4_Port(0x00);
 	_delay_ms(20);
 	///////////// Reset process from datasheet /////////
@@ -155,7 +158,12 @@ void LCD4_Write_String(char *String)				//Write a string to LCD
 	LCD4_Write_Char(String[i]);
 }
 
-
+void LCD4_Write_Int(int Num){
+       char str[32];
+       
+        sprintf (str, "%d", Num);
+        LCD4_Write_String(str);
+}
 void LCD4_Write_Float(float Num){
         char str[32];
         char *tmpSign = (Num < 0) ? "-" : "";

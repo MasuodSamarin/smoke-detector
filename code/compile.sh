@@ -1,6 +1,6 @@
 #rm *.o *.hex *.elf *~
-SRC="menu.c adc.c lm35.c output.c keypad.c lcd.c mq2.c main.c"
-OBJ="menu.o adc.o lm35.o output.o keypad.o lcd.o mq2.o main.o"
+SRC="test.c menu.c adc.c lm35.c output.c keypad.c lcd.c mq2.c main.c"
+OBJ="test.o menu.o adc.o lm35.o output.o keypad.o lcd.o mq2.o main.o"
 
 avr-gcc -g -Os -mmcu=atmega32 -c $SRC
 avr-gcc -g -mmcu=atmega32 -o smoke.elf $OBJ

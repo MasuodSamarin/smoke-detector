@@ -9,6 +9,7 @@
 //Data and control ports/pins configuration (Configured by user due to hardware connections)
 #define LCD_PORT        PORTB
 #define LCD_CTRL_PORT   PORTB
+#define LCD_CTRL_DIR    DDRB
 
 #define D7 PINB7
 #define D6 PINB6

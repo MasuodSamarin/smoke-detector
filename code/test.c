@@ -1,19 +1,3 @@
-// Counts for how long the machine has been running
-
-float LPGCurve[3] = {2.3,0.20,-0.45};   //two points from LPG curve are taken point1:(200,1.6) point2(10000,0.26)
-                                                    //take log of each point (lg200, lg 1.6)=(2.3,0.20)  (lg10000,lg0.26)=(4,-0.58)
-                                                    //find the slope using these points. take point1 as reference   
-                                                    //data format:{ x, y, slope};  
-
-float SmokeCurve[3] = {2.3,0.53,-0.43};    //two points from smoke curve are taken point1:(200,3.4) point2(10000,0.62) 
-                                                    //take log of each point (lg200, lg3.4)=(2.3,0.53)  (lg10000,lg0.63)=(4,-0.20)
-                                                    //find the slope using these points. take point1 as reference   
-                                                    //data format:{ x, y, slope};
-														                                                  
-float Ro = 10;  //Ro is initialized to 10 kilo ohms
- 
-char str[16];
-int res;
 
 #define F_CPU 8000000UL
 
@@ -29,28 +13,9 @@ int res;
 #include "lm35.h"
 #include "output.h"
 #include "menu.h"
+#include "test.h"
 
 
-void keypad_test(void);
-void mq2_test(void);
-void output_test(void);
-void lm35_test(void);
-
-
-int main(void)
-
-{
-
-
-        keypad_test();
-        //mq2_test();
-        //output_test();      
-        //lm35_test();       
-       
-}
-   
-
-   
 void output_test(void){
 
         output_init();
@@ -169,5 +134,3 @@ void lm35_test(void){
         }
 }
      
-
-
