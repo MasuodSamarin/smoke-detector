@@ -24,7 +24,7 @@ float SensorCalibration(void)
   for (i=0;i<factor;i++) {                   //take multiple samples and calculate the average value
 	  
     val += ResistanceCalculation(ADC_read(0));
-    _delay_ms(100);
+    _delay_ms(10);
   }
   val = val/factor;                  
   val = val/RO_CLEAN_AIR_FACTOR;                        //divided by RO_CLEAN_AIR_FACTOR yields the Ro 

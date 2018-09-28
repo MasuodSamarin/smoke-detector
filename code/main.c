@@ -61,78 +61,19 @@ int main(void)
         //lm35_test();      
          
                         
-        g_data.ppm_lpg_max = 2000;
-        g_data.ppm_smoke_max = 2000;
-        g_data.temp_max = 33;   
-        g_data.ppm_lpg = 0;
-        g_data.ppm_smoke = 0;
-        g_data.temp = 0;     
+          
         
         LCD4_Init();  // initialization of LCD function
         LCD4_Clear();
-        //LCD4_Set_Cursor(1, 1);         // Go to the location 1,1 of lcd
-        //LCD4_Write_String("HELLO"); // Print the text
-        //_delay_ms(1000);
-       // LCD4_Clear();
+     
        
         eeprom_read();
-        
-     g_data.ppm_lpg_max = 2000;
-        g_data.ppm_smoke_max = 2000;
-        g_data.temp_max = 33;   
-        g_data.ppm_lpg = 0;
-        g_data.ppm_smoke = 0;
-        g_data.temp = 0;           
-        
-      /*  if(eeprom_read()){
-                int i;
-                for(i=0; i<3; i++){
-                        if(!pass_query())
-                                break;
-
-                }
-                if(i >= 2){
-                        //g_data.next_menu = MENU_5;
-                        //return;   
-                        reset_keypad();
-                        in_loop();     
-                }else{
-                        g_data.next_menu = MENU_4;
-                }
-                        //pass_query();
-                        //g_data.next_menu = MENU_4;
-
-        }else{
-                g_data.next_menu = MENU_2;               
-        }
-        */
-     
-  //g_data.next_menu = MENU_4;      
-  
-        //g_data.is_resigter = 1;
-        //strcpy(g_data.pass, "1111");
-        //g_data.next_menu = MENU_4;
-        //calib_mq2();        
-        //while(pass_set());
-        //while(tel_set());
-        //swhile(max_mq2_set());
-        
-        //eeprom_save();
         
         reset_keypad();
         g_data.warn = 0;
         g_data.next_menu = MENU_4; 
         while(1){
-                //mq2_warning();
-                //this is main loop of system
-                //welcome(&g_data);
-                //calib_mq2(&g_data);
-                //keypad_talk_back();
-                //show_mq2_lm35();
-                //pass_query();
-                
-                
-
+ 
                 state_machine();
                 set_state();
                 

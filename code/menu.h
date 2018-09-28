@@ -114,6 +114,7 @@ menu_fp Menu_Functions[] = {
 
 */
 
+void my_test_eep(void);
 
 extern Data_typedef g_data;
 extern Menu_typedef g_menu;

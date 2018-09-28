@@ -96,13 +96,24 @@ int eeprom_read(void){
         eeprom_read_block ((void*)&g_data.pass, (void*)PASS_REGISTER_ADDR, PASS_REGISTER_LENGTH);
         eeprom_read_block ((void*)&g_data.tel, (void*)TEL_REGISTER_ADDR, TEL_REGISTER_LENGTH);
         
-        LCD4_Clear();
+
 
                
         if((g_data.is_resigter != 1))
         {
                 //LCD4_Write_String("bad READ");
-                //_delay_ms(1000);  
+                //_delay_ms(1000);
+                g_data.ppm_lpg_max = 2000;
+                g_data.ppm_smoke_max = 2000;
+                g_data.temp_max = 33;   
+                g_data.ppm_lpg = 0;
+                g_data.ppm_smoke = 0;
+                g_data.temp = 0;
+                g_data.is_resigter = 0;
+                LCD4_Clear();
+                LCD4_Set_Cursor(1, 1);
+                LCD4_Write_String("First time");                
+                eeprom_save();       
                 return 0;      
         }
 
@@ -126,10 +137,11 @@ void eeprom_save(void){
         eeprom_write_block ((void*)&g_data.pass, (void*)PASS_REGISTER_ADDR, PASS_REGISTER_LENGTH);
         eeprom_write_block ((void*)&g_data.tel, (void*)TEL_REGISTER_ADDR, TEL_REGISTER_LENGTH);
    
-        LCD4_Clear();
+        //LCD4_Clear();
+        LCD4_Set_Cursor(2, 1);
         LCD4_Write_String("eeprom saved");
 
-        _delay_ms(2500);  
+        _delay_ms(1500);  
 
 }
 
@@ -143,7 +155,7 @@ int pass_query(void){
         int cnt=0;
      
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 2);
+        LCD4_Set_Cursor(1, 3);
         LCD4_Write_String("ENTER PASS");
         LCD4_Set_Cursor(2, 6);
          _delay_ms(300);
@@ -481,7 +493,7 @@ int max_lm35_set(void){
 
 
 void reset_warn(void){
-\
+
         //LCD4_Clear();
         //LCD4_Set_Cursor(1, 3);
         //LCD4_Write_String("Warn Clear"); 
@@ -503,7 +515,7 @@ void show_warn(void){
                 cnt = 0;
                 
                 buzzer_on();
-                //relay_on();                              
+                relay_on();                              
         }else{
                 if(cnt>20){
                         buzzer_off(); 
@@ -515,17 +527,26 @@ void show_warn(void){
 
 }
 
-
+/*
+        tim1 interrupt handler
+*/
 void warn_handler(void){
+        
+        static int st=0;
+        
+        
 
         if(warning() == 1){
+                st = 1;
                 g_data.warn = 1;                        
                 show_warn();
 
-
         }else{
-                reset_warn();
-                g_data.warn = 0;
+              if(st=1){
+                        st=0;
+                        reset_warn();
+                        g_data.warn = 0;
+                }
         }
 
 }
@@ -743,10 +764,12 @@ void set_state(void){
                         case '3':
                                 g_data.next_menu = MENU_3;       
                         break;
-                        case '4':
+                        case 'A':
+                                buzzer_on();
                                 //g_data.next_menu = MENU_4;       
                         break; 
-                        case '5':
+                        case 'B':
+                                relay_on();
                                 //g_data.next_menu = MENU_5;       
                         break;                        
                 }
@@ -754,5 +777,20 @@ void set_state(void){
        }
 }
 
+
+void my_test_eep(void){
+        LCD4_Clear();
+        
+        
+        LCD4_Set_Cursor(1, 1);
+        LCD4_Write_Int(g_data.ppm_lpg_max);
+        LCD4_Set_Cursor(2, 2);
+        LCD4_Write_Int(g_data.ppm_smoke_max);        
+
+        
+                     _delay_ms(3000);
+
+
+}
 
 
