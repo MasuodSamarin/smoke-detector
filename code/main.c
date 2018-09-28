@@ -61,17 +61,30 @@ int main(void)
         //lm35_test();      
          
                         
-      
+        g_data.ppm_lpg_max = 2000;
+        g_data.ppm_smoke_max = 2000;
+        g_data.temp_max = 33;   
+        g_data.ppm_lpg = 0;
+        g_data.ppm_smoke = 0;
+        g_data.temp = 0;     
         
         LCD4_Init();  // initialization of LCD function
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 1);         // Go to the location 1,1 of lcd
-        LCD4_Write_String("HELLO"); // Print the text
-        _delay_ms(1000);
-        LCD4_Clear();
+        //LCD4_Set_Cursor(1, 1);         // Go to the location 1,1 of lcd
+        //LCD4_Write_String("HELLO"); // Print the text
+        //_delay_ms(1000);
+       // LCD4_Clear();
        
-
-        if(eeprom_read()){
+        eeprom_read();
+        
+     g_data.ppm_lpg_max = 2000;
+        g_data.ppm_smoke_max = 2000;
+        g_data.temp_max = 33;   
+        g_data.ppm_lpg = 0;
+        g_data.ppm_smoke = 0;
+        g_data.temp = 0;           
+        
+      /*  if(eeprom_read()){
                 int i;
                 for(i=0; i<3; i++){
                         if(!pass_query())
@@ -79,8 +92,10 @@ int main(void)
 
                 }
                 if(i >= 2){
-                        g_data.next_menu = MENU_5;
-                        //return;        
+                        //g_data.next_menu = MENU_5;
+                        //return;   
+                        reset_keypad();
+                        in_loop();     
                 }else{
                         g_data.next_menu = MENU_4;
                 }
@@ -90,7 +105,7 @@ int main(void)
         }else{
                 g_data.next_menu = MENU_2;               
         }
-        
+        */
      
   //g_data.next_menu = MENU_4;      
   
@@ -103,9 +118,12 @@ int main(void)
         //swhile(max_mq2_set());
         
         //eeprom_save();
-                                reset_keypad();
-        while(1){
         
+        reset_keypad();
+        g_data.warn = 0;
+        g_data.next_menu = MENU_4; 
+        while(1){
+                //mq2_warning();
                 //this is main loop of system
                 //welcome(&g_data);
                 //calib_mq2(&g_data);
@@ -143,6 +161,13 @@ void init_timer(void){
         TIMER_Init(TIMER_0, TIMER0_MAX_DELAY);
         TIMER_AttachInterrupt(TIMER_0, keypad_handler);
         TIMER_Start(TIMER_0);
+        
+        TIMER_Init(TIMER_2, TIMER2_MAX_DELAY);
+        TIMER_AttachInterrupt(TIMER_2, warn_handler);
+        TIMER_Start(TIMER_2);
+        
+         
+
         sei();
 }
 

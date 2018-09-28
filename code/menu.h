@@ -22,7 +22,8 @@ typedef enum{
         MENU_2, //set pass //set tel
         MENU_3, //set max ppm for lpg and smoke, also set max temp
         MENU_4, //startup and loading info section. also, show welcome massege meanwhile 
-        MENU_5, 
+        MENU_5,
+        MENU_6, 
         MENU_MAX
 }Menu_Select_typedef;
 
@@ -31,7 +32,7 @@ typedef struct{
         int is_resigter;
         
         char pass[5];
-        char tel[9];
+        char tel[12];
         
         int ppm_lpg;
         int ppm_lpg_max;
@@ -51,6 +52,10 @@ typedef struct{
 
         char keypad_ready;
         char keypad_last;
+        
+        
+        int warn;
+        
         
 }Data_typedef;
 
@@ -93,8 +98,10 @@ void state_machine(void);
 void set_state(void);
 
 
-
-
+void warn_handler(void);
+void show_warn(void);
+int warning(void);
+void reset_warn(void);
 
 void eeprom_save(void);
 int eeprom_read(void);

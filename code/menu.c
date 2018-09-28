@@ -26,8 +26,8 @@ Menu_typedef  g_menu;
 
 
 
-char msg_welcome1[] =   "    WELCOME";
-char msg_welcome2[] =   "SqCTOR";
+char msg_welcome1[] =   "   WELCOME";
+char msg_welcome2[] =   "Smoke Detector";
 char msg_welcome3[] =   "->MOHAMAD ZARE<-";
 char msg_welcome4[] =   "  SHAMSI  POUR";
 char msg_calib[] =      "CALIB ...";
@@ -47,7 +47,7 @@ void welcome(void){
                 LCD4_Shift_Left();
                 _delay_ms(100);
         }
-        _delay_ms(1000);
+        _delay_ms(2000);
 
         LCD4_Clear();
         LCD4_Set_Cursor(1, 16);
@@ -77,10 +77,10 @@ void calib_mq2(void){
         LCD4_Write_Float(g_data.Ro);
         LCD4_Write_String(" K-ohm");
         buzzer_on();
-        _delay_ms(1000);  
+        _delay_ms(500);  
         buzzer_off();
 
-        _delay_ms(2000);
+        _delay_ms(500);
         LCD4_Clear();
 }
 
@@ -101,14 +101,14 @@ int eeprom_read(void){
                
         if((g_data.is_resigter != 1))
         {
-                LCD4_Write_String("bad READ");
-                _delay_ms(1000);  
+                //LCD4_Write_String("bad READ");
+                //_delay_ms(1000);  
                 return 0;      
         }
 
         else{
-                LCD4_Write_String("good read");
-                _delay_ms(1000);
+                //LCD4_Write_String("good read");
+                //_delay_ms(1000);
                 return 1;
         }
 
@@ -143,8 +143,8 @@ int pass_query(void){
         int cnt=0;
      
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 4);
-        LCD4_Write_String(g_data.pass);
+        LCD4_Set_Cursor(1, 2);
+        LCD4_Write_String("ENTER PASS");
         LCD4_Set_Cursor(2, 6);
          _delay_ms(300);
        
@@ -203,7 +203,7 @@ int pass_set(void){
         int cnt=0;
      
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 2);
+        LCD4_Set_Cursor(1, 3);
         LCD4_Write_String("NEW PASSWORD");
         LCD4_Set_Cursor(2, 6);
          _delay_ms(300);
@@ -227,7 +227,7 @@ int pass_set(void){
         query1[cnt] = 0;
         cnt=0;
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 5);
+        LCD4_Set_Cursor(1, 6);
         LCD4_Write_String("AGAIN");
         LCD4_Set_Cursor(2, 6);
          _delay_ms(300);
@@ -289,7 +289,7 @@ int tel_set(void){
         int cnt=0;
      
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 6);
+        LCD4_Set_Cursor(1, 7);
         LCD4_Write_String("TEL");
         LCD4_Set_Cursor(2, 3);
          _delay_ms(300);
@@ -315,7 +315,7 @@ int tel_set(void){
                 
 
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 3);
+        LCD4_Set_Cursor(1, 4);
         LCD4_Write_String("->SAVE<-");
 
         strcpy(g_data.tel, query1);
@@ -364,7 +364,7 @@ int max_mq2_set(void){
                 
         g_data.ppm_lpg_max = atoi(query1);
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 3);
+        LCD4_Set_Cursor(1, 4);
         LCD4_Write_String("->SAVE<-");
    
         buzzer_on();
@@ -401,7 +401,7 @@ int max_mq2_set(void){
                 
         g_data.ppm_smoke_max = atoi(query1);
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 3);
+        LCD4_Set_Cursor(1, 4);
         LCD4_Write_String("->SAVE<-");
    
         buzzer_on();
@@ -459,7 +459,7 @@ int max_lm35_set(void){
                 
         g_data.temp_max = atoi(query1);
         LCD4_Clear();
-        LCD4_Set_Cursor(1, 3);
+        LCD4_Set_Cursor(1, 4);
         LCD4_Write_String("->SAVE<-");
    
         buzzer_on();
@@ -479,14 +479,72 @@ int max_lm35_set(void){
 
 }
 
-void mq2_warning(void){
+
+void reset_warn(void){
+\
+        //LCD4_Clear();
+        //LCD4_Set_Cursor(1, 3);
+        //LCD4_Write_String("Warn Clear"); 
+        buzzer_off();
+        relay_off();
+        //_delay_ms(3000);                               
+}
+
+void show_warn(void){
+        static int state = 0;
+        static long int cnt = 0;
+        long int wait = 100;
+
+        cnt++;
+        //cnt = cnt % 2000;
+        
+        if(state==0){
+                state = 1;
+                cnt = 0;
+                
+                buzzer_on();
+                //relay_on();                              
+        }else{
+                if(cnt>20){
+                        buzzer_off(); 
+                        state = 0;                       
+                }
+        }
+
 
 
 }
 
-void lm35_warning(void){
+
+void warn_handler(void){
+
+        if(warning() == 1){
+                g_data.warn = 1;                        
+                show_warn();
+
+
+        }else{
+                reset_warn();
+                g_data.warn = 0;
+        }
 
 }
+
+int warning(void){
+        
+        if(g_data.ppm_smoke >= g_data.ppm_smoke_max)
+                return 1;
+        
+        if(g_data.ppm_lpg >= g_data.ppm_lpg_max)
+                return 1;
+                
+        if(g_data.temp >= g_data.temp_max)
+                return 1;
+      
+         return 0;       
+}
+
+
 
 void show_mq2_lm35(void){
 
@@ -496,20 +554,32 @@ void show_mq2_lm35(void){
         g_data.temp = lm35_get_temp()/10;
 
         LCD4_Clear();
-        //LCD4_Set_Cursor(1, 1);
-        //LCD4_Write_String("              ");
-        LCD4_Set_Cursor(1, 1);
-        LCD4_Write_String("S=");
-        LCD4_Write_Int(g_data.ppm_smoke);
+        
+        if(g_data.warn == 1){
+                //LCD4_Clear();
+                LCD4_Set_Cursor(1, 2);
+                LCD4_Write_String("!! WARNING !!");
+                LCD4_Set_Cursor(2, 3);
+                LCD4_Write_String(g_data.tel);  
+        
+        }else{
+                   //LCD4_Set_Cursor(1, 1);
+                //LCD4_Write_String("              ");
+                LCD4_Set_Cursor(1, 1);
+                LCD4_Write_String("S=");
+                LCD4_Write_Int(g_data.ppm_smoke);
 
-        //LCD4_Set_Cursor(1, 6);
-        LCD4_Write_String("   L=");
-        LCD4_Write_Int(g_data.ppm_lpg);
+                //LCD4_Set_Cursor(1, 6);
+                LCD4_Write_String("   L=");
+                LCD4_Write_Int(g_data.ppm_lpg);
 
-        LCD4_Set_Cursor(2, 1);               
-        LCD4_Write_String("temp: ");
-        LCD4_Write_Int(g_data.temp);
-        LCD4_Write_String("'C  ");
+                LCD4_Set_Cursor(2, 1);               
+                LCD4_Write_String("temp: ");
+                LCD4_Write_Int(g_data.temp);
+                LCD4_Write_String("'C  ");
+        }
+        
+     
         
           _delay_ms(250);        
        
@@ -545,8 +615,13 @@ void state_machine(void){
         
                 case MENU_1:
                         reset_keypad();
-                        show_mq2_lm35();
-                        g_data.next_menu = MENU_1;
+                        
+                        //if(!(g_data.warn))
+                         //if(!warning())
+                         //if (g_data.warn == 0)
+                         show_mq2_lm35();
+                        
+                        //g_data.next_menu = MENU_1;
                         //LCD4_Clear();
                 break;
                 
@@ -572,9 +647,38 @@ void state_machine(void){
                 break;
                 
                 case MENU_4:
-reset_keypad();
+                        
+                        reset_keypad();
                         welcome();
                         calib_mq2();
+                                       
+                        if((g_data.is_resigter != 1))
+                        {
+                                //LCD4_Write_String("not REGIST");
+                                //_delay_ms(1000);
+                                g_data.next_menu = MENU_2;
+                                break;  
+                                //return 0;      
+                        }else{
+                                //LCD4_Write_String("REGISTER");
+                                //_delay_ms(1000);
+                                int i;
+                                for(i=0; i<3; i++){
+                                        if(!pass_query())
+                                                break;
+
+                                }
+                                if(i >= 2){
+                                        g_data.next_menu = MENU_5;
+                                        //reset_keypad();
+                                        //in_loop();     
+                                }else{
+                                        g_data.next_menu = MENU_1;
+                                }
+                                
+                        }
+
+
                         /*
                         if(g_data.is_resigter){
                                 //device is registered
@@ -596,16 +700,25 @@ reset_keypad();
                                 g_data.next_menu = MENU_2;
                         }*/
                                 
-                        g_data.next_menu = MENU_1;
+                        //g_data.next_menu = MENU_1;
                         LCD4_Clear();
                 break;
                 
                 case MENU_5:
-                reset_keypad();
+                        reset_keypad();
                         in_loop();
                         //g_data.next_menu = MENU_1;
                         //LCD4_Clear();
                 break;
+                
+  /*              case MENU_6:
+                        reset_keypad();
+                               //g_data.ppm_smoke = GetGasPercentage(ReadSensor()/g_data.Ro, SMOKE);
+                                //g_data.ppm_lpg = GetGasPercentage(ReadSensor()/g_data.Ro, LPG);
+                                g_data.temp = lm35_get_temp()/10;
+                        
+                        
+                break;*/
         }
         
         
