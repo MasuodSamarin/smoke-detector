@@ -8,11 +8,11 @@
 
 #define BUZZER_DDR      DDRD
 #define BUZZER_PORT     PORTD
-#define BUZZER_PIN      6
+#define BUZZER_PIN      7
 
 #define RELAY_DDR       DDRD
 #define RELAY_PORT      PORTD
-#define RELAY_PIN       7
+#define RELAY_PIN       6
 
 
 

@@ -2,9 +2,23 @@
 #define MENU_H_
 
 
+/*eeprom address book*/
+#define IS_REGISTER_ADDR 0x00
+
+#define LPG_MAX_REGISTER_ADDR 0x04
+#define SMK_MAX_REGISTER_ADDR 0x08
+#define TMP_MAX_REGISTER_ADDR 0x0A
+
+#define PASS_REGISTER_ADDR 0x20
+#define PASS_REGISTER_LENGTH 5
+
+#define TEL_REGISTER_ADDR 0x30
+#define TEL_REGISTER_LENGTH 12
+
+
 
 typedef enum{
-        MENU_1, //main menu
+        MENU_1=0, //main menu
         MENU_2, //set pass //set tel
         MENU_3, //set max ppm for lpg and smoke, also set max temp
         MENU_4, //startup and loading info section. also, show welcome massege meanwhile 
@@ -29,8 +43,8 @@ typedef struct{
         
         Menu_Select_typedef     next_menu;
         
-        char lcd_line_1[16];
-        char lcd_line_2[16];
+        //char lcd_line_1[16];
+        //char lcd_line_2[16];
         
         
         float Ro;// = 10;  //Ro is initialized to 10 kilo ohms
@@ -45,6 +59,7 @@ typedef struct{
  * function pointer:
  * we assigin a functin for every menu state
  * */
+
 typedef void (*menu_fp) (Data_typedef *data);
 
 
@@ -60,7 +75,7 @@ typedef struct{
 
 
 
-
+void reset_keypad(void);
 
 
 
@@ -77,6 +92,12 @@ void show_mq2_lm35(void);
 void state_machine(void);
 void set_state(void);
 
+
+
+
+
+void eeprom_save(void);
+int eeprom_read(void);
 /*
 menu_fp Menu_Functions[] = {
 

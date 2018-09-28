@@ -24,9 +24,9 @@ int res;
 #include <avr/io.h>
 #include <string.h>
 #include <util/delay.h>
-
+#include <avr/eeprom.h>
 #include "tim.h"
-#include "eeprom.h"
+//#include "eeprom.h"
 #include "adc.h"
 #include "lcd.h"
 #include "keypad.h"
@@ -69,26 +69,55 @@ int main(void)
         LCD4_Write_String("HELLO"); // Print the text
         _delay_ms(1000);
         LCD4_Clear();
+       
+
+        if(eeprom_read()){
+                int i;
+                for(i=0; i<3; i++){
+                        if(!pass_query())
+                                break;
+
+                }
+                if(i >= 2){
+                        g_data.next_menu = MENU_5;
+                        //return;        
+                }else{
+                        g_data.next_menu = MENU_4;
+                }
+                        //pass_query();
+                        //g_data.next_menu = MENU_4;
+
+        }else{
+                g_data.next_menu = MENU_2;               
+        }
         
-        g_data.is_resigter = 1;
-        strcpy(g_data.pass, "1111");
-        g_data.next_menu = MENU_4;
+     
+  //g_data.next_menu = MENU_4;      
+  
+        //g_data.is_resigter = 1;
+        //strcpy(g_data.pass, "1111");
+        //g_data.next_menu = MENU_4;
         //calib_mq2();        
         //while(pass_set());
         //while(tel_set());
         //swhile(max_mq2_set());
         
+        //eeprom_save();
+                                reset_keypad();
         while(1){
         
                 //this is main loop of system
                 //welcome(&g_data);
                 //calib_mq2(&g_data);
                 //keypad_talk_back();
-
-                //pass_query();
-                set_state();
-                state_machine();
                 //show_mq2_lm35();
+                //pass_query();
+                
+                
+
+                state_machine();
+                set_state();
+                
         } 
        
 }

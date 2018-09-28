@@ -6,6 +6,8 @@
 #include <util/delay.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <avr/eeprom.h>
 
 #include "adc.h"
 #include "lcd.h"
@@ -16,14 +18,18 @@
 #include "menu.h"
 
 
-Data_typedef g_data;
-Menu_typedef g_menu;
 
 
 
-char msg_welcome1[] =   "WELCOME";
-char msg_welcome2[] =   " SMOKE-DETECTOR ";
+Data_typedef  g_data;
+Menu_typedef  g_menu;
+
+
+
+char msg_welcome1[] =   "    WELCOME";
+char msg_welcome2[] =   "SqCTOR";
 char msg_welcome3[] =   "->MOHAMAD ZARE<-";
+char msg_welcome4[] =   "  SHAMSI  POUR";
 char msg_calib[] =      "CALIB ...";
 char msg_ok[] =         "OK";
 char msg_cancel[] =     "CANCEL";
@@ -34,7 +40,10 @@ void welcome(void){
         LCD4_Clear();
         LCD4_Set_Cursor(1, 16);
         LCD4_Write_String(msg_welcome1);
-        for(int i=0; i<10; i++){
+        LCD4_Set_Cursor(2, 16);
+        LCD4_Write_String(msg_welcome2);
+                
+        for(int i=0; i<14; i++){
                 LCD4_Shift_Left();
                 _delay_ms(100);
         }
@@ -42,9 +51,9 @@ void welcome(void){
 
         LCD4_Clear();
         LCD4_Set_Cursor(1, 16);
-        LCD4_Write_String(msg_welcome2);
-        LCD4_Set_Cursor(2, 16);
         LCD4_Write_String(msg_welcome3);
+        LCD4_Set_Cursor(2, 16);
+        LCD4_Write_String(msg_welcome4);
         for(int i=0; i<15; i++){
                 LCD4_Shift_Left();
                 _delay_ms(100);
@@ -72,23 +81,70 @@ void calib_mq2(void){
         buzzer_off();
 
         _delay_ms(2000);
-                        LCD4_Clear();
+        LCD4_Clear();
 }
 
 
+
+int eeprom_read(void){
+
+        g_data.is_resigter = eeprom_read_word((uint16_t*)IS_REGISTER_ADDR);
+        g_data.ppm_lpg_max = eeprom_read_word((uint16_t*)LPG_MAX_REGISTER_ADDR);     
+        g_data.ppm_smoke_max = eeprom_read_word((uint16_t*)SMK_MAX_REGISTER_ADDR);
+        g_data.temp_max = eeprom_read_word((uint16_t*)TMP_MAX_REGISTER_ADDR);        
+  
+        eeprom_read_block ((void*)&g_data.pass, (void*)PASS_REGISTER_ADDR, PASS_REGISTER_LENGTH);
+        eeprom_read_block ((void*)&g_data.tel, (void*)TEL_REGISTER_ADDR, TEL_REGISTER_LENGTH);
+        
+        LCD4_Clear();
+
+               
+        if((g_data.is_resigter != 1))
+        {
+                LCD4_Write_String("bad READ");
+                _delay_ms(1000);  
+                return 0;      
+        }
+
+        else{
+                LCD4_Write_String("good read");
+                _delay_ms(1000);
+                return 1;
+        }
+
+
+}
+
+void eeprom_save(void){
+
+
+        eeprom_write_word((uint16_t*)IS_REGISTER_ADDR, g_data.is_resigter);
+        eeprom_write_word((uint16_t*)LPG_MAX_REGISTER_ADDR, g_data.ppm_lpg_max);
+        eeprom_write_word((uint16_t*)SMK_MAX_REGISTER_ADDR, g_data.ppm_smoke_max);
+        eeprom_write_word((uint16_t*)TMP_MAX_REGISTER_ADDR, g_data.temp_max);
+    
+        eeprom_write_block ((void*)&g_data.pass, (void*)PASS_REGISTER_ADDR, PASS_REGISTER_LENGTH);
+        eeprom_write_block ((void*)&g_data.tel, (void*)TEL_REGISTER_ADDR, TEL_REGISTER_LENGTH);
+   
+        LCD4_Clear();
+        LCD4_Write_String("eeprom saved");
+
+        _delay_ms(2500);  
+
+}
 
 /*
 
 */
 int pass_query(void){
         
-        char pass[] = "1111";
+        //char pass[] = "1111";
         char query[5];
         int cnt=0;
      
         LCD4_Clear();
         LCD4_Set_Cursor(1, 4);
-        LCD4_Write_String("PASSWORD");
+        LCD4_Write_String(g_data.pass);
         LCD4_Set_Cursor(2, 6);
          _delay_ms(300);
        
@@ -110,7 +166,7 @@ int pass_query(void){
         }
         query[4] = 0;
         
-        if (strcmp(g_data.pass, query)){
+        if (strncmp(g_data.pass, query, 4)){
                 //if pass  NOT is correct
                 LCD4_Clear();
                 LCD4_Set_Cursor(1, 3);
@@ -228,7 +284,7 @@ int pass_set(void){
 int tel_set(void){
         
 
-        char query1[9];
+        char query1[12];
 
         int cnt=0;
      
@@ -239,7 +295,7 @@ int tel_set(void){
          _delay_ms(300);
        
         g_data.keypad_ready = 0;  
-        while(cnt < 8){
+        while(cnt < 11){
                 if(g_data.keypad_ready){
                         LCD4_Write_Char(g_data.keypad_last);
                         buzzer_on();
@@ -439,7 +495,7 @@ void show_mq2_lm35(void){
         g_data.ppm_lpg = GetGasPercentage(ReadSensor()/g_data.Ro, LPG);
         g_data.temp = lm35_get_temp()/10;
 
-        //LCD4_Clear();
+        LCD4_Clear();
         //LCD4_Set_Cursor(1, 1);
         //LCD4_Write_String("              ");
         LCD4_Set_Cursor(1, 1);
@@ -458,6 +514,11 @@ void show_mq2_lm35(void){
           _delay_ms(250);        
        
         
+}
+
+void reset_keypad(void){
+        g_data.keypad_ready = 0;        
+        g_data.keypad_last = 0;        
 }
 
 
@@ -483,31 +544,40 @@ void state_machine(void){
         switch(g_data.next_menu){
         
                 case MENU_1:
+                        reset_keypad();
                         show_mq2_lm35();
                         g_data.next_menu = MENU_1;
                         //LCD4_Clear();
                 break;
                 
                 case MENU_2:
+                reset_keypad();
                         while(pass_set());
                         while(tel_set());
+                        //eeprom_save();
+                        g_data.is_resigter = 1;
+                        eeprom_save();
+                        reset_keypad();
                         g_data.next_menu = MENU_1;
                         LCD4_Clear();
                 break;
                 
                 case MENU_3:
+                reset_keypad();
                         max_mq2_set();
                         max_lm35_set();
+                        //eeprom_save();
                         g_data.next_menu = MENU_1;
                         LCD4_Clear();
                 break;
                 
                 case MENU_4:
-
+reset_keypad();
                         welcome();
                         calib_mq2();
+                        /*
                         if(g_data.is_resigter){
-                                
+                                //device is registered
                                 for(cnt=0; cnt<3; cnt++){
                                         if(!pass_query())
                                                 break;
@@ -522,15 +592,16 @@ void state_machine(void){
                                 
                                 
                         }
-                        else{
+                        else{//is not register
                                 g_data.next_menu = MENU_2;
-                        }
+                        }*/
                                 
-                        
+                        g_data.next_menu = MENU_1;
                         LCD4_Clear();
                 break;
                 
                 case MENU_5:
+                reset_keypad();
                         in_loop();
                         //g_data.next_menu = MENU_1;
                         //LCD4_Clear();
@@ -560,10 +631,10 @@ void set_state(void){
                                 g_data.next_menu = MENU_3;       
                         break;
                         case '4':
-                                g_data.next_menu = MENU_4;       
+                                //g_data.next_menu = MENU_4;       
                         break; 
                         case '5':
-                                g_data.next_menu = MENU_5;       
+                                //g_data.next_menu = MENU_5;       
                         break;                        
                 }
                                    
