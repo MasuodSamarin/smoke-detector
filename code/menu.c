@@ -821,6 +821,17 @@ void state_machine(void){
                         in_loop();
  
                 break;
+                
+                case MENU_6:
+                //calibrate menu
+                        reset_keypad();
+                        LCD4_Clear();
+                        calib_mq2();
+                        eeprom_save();
+                        LCD4_Clear();
+                        //in_loop();
+
+                break;
  
         }
 
@@ -869,10 +880,10 @@ void set_state(void){
                         case '3':
                                 g_data.next_menu = MENU_3;       
                         break;
-                        /*case 'A':
-                                buzzer_on();
-                                //g_data.next_menu = MENU_4;       
-                        break; 
+                        case '4':
+                                g_data.next_menu = MENU_6;       
+                        break;
+                        /* 
                         case 'B':
                                 relay_on();
                                 //g_data.next_menu = MENU_5;       
