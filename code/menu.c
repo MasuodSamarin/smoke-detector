@@ -502,13 +502,15 @@ void reset_warn(void){
         //_delay_ms(3000);                               
 }
 
+
+/*
 void show_warn(void){
         static int state = 0;
         static long int cnt = 0;
         long int wait = 100;
 
         cnt++;
-        //cnt = cnt % 2000;
+        cnt = cnt % 2000;
         
         if(state==0){
                 state = 1;
@@ -530,17 +532,16 @@ void show_warn(void){
 /*
         tim1 interrupt handler
 */
+
+/*
 void warn_handler(void){
         
         static int st=0;
-        
-        
-
+ 
         if(warning() == 1){
                 st = 1;
                 g_data.warn = 1;                        
                 show_warn();
-
         }else{
               if(st=1){
                         st=0;
@@ -550,24 +551,90 @@ void warn_handler(void){
         }
 
 }
+*/
 
+
+
+#define WARNING_NO_WARN 0
+#define WARNING_SMOKE   1
+#define WARNING_LPG     2
+#define WARNING_TEMP    3
 int warning(void){
         
         if(g_data.ppm_smoke >= g_data.ppm_smoke_max)
-                return 1;
+                return WARNING_SMOKE;
         
         if(g_data.ppm_lpg >= g_data.ppm_lpg_max)
-                return 1;
+                return WARNING_LPG;
                 
         if(g_data.temp >= g_data.temp_max)
-                return 1;
+                return WARNING_TEMP;
       
-         return 0;       
+         return WARNING_NO_WARN;       
 }
 
+void warn_output(int warn){
 
+        //static int state=0;
+        static long int cnt = 0;
+        //long int wait = 100;
+        static int is_warn=0;
+        
+        if(warn != WARNING_NO_WARN){
+                is_warn=1;
+                relay_on();
+                if((cnt++)%100){
+                        buzzer_toggle();        
+                }
+                //buzzer_on();
+        }else{
+               
+                if(is_warn==1){
+                        is_warn=0;
+                        relay_off();
+                        buzzer_off();
+                        
+                        
+                }else{
+                        //no op
+                }
+        }
+        
+        
+        
+        
+        
+        
+     /*          
+        if((warn==0))// && (state==0))
+                return;
+        else{
+                had_warn=1;
+        }
+        
+        
+           //relay_toggle;buzzer_toggle;
+ 
+        cnt++;
+        cnt = cnt % wait;
+               
 
-void show_mq2_lm35(void){
+        
+        if(state==0){
+                //state=0
+                state=1;
+                buzzer_on();
+                relay_on();
+        }else{  
+                if(cnt==0){
+                        buzzer_toggle();    
+                }
+                         
+        }
+        */
+}
+
+void main_menu(void){
 
 
         g_data.ppm_smoke = GetGasPercentage(ReadSensor()/g_data.Ro, SMOKE);
@@ -576,12 +643,63 @@ void show_mq2_lm35(void){
 
         LCD4_Clear();
         
-        if(g_data.warn == 1){
+        int warn = warning();
+        warn_output(warn);
+        switch(warn){
+                case WARNING_NO_WARN:
+                        //main menu
+                        LCD4_Set_Cursor(1, 1);
+                        LCD4_Write_String("S=");
+                        LCD4_Write_Int(g_data.ppm_smoke);
+
+                        //LCD4_Set_Cursor(1, 6);
+                        LCD4_Write_String("   L=");
+                        LCD4_Write_Int(g_data.ppm_lpg);
+
+                        LCD4_Set_Cursor(2, 1);               
+                        LCD4_Write_String("temp: ");
+                        LCD4_Write_Int(g_data.temp);
+                        LCD4_Write_String("'C  ");
+                break;
+                
+                case WARNING_SMOKE:
+                        LCD4_Set_Cursor(1, 1);
+                        LCD4_Write_String("TEL= ");
+                        LCD4_Write_String(g_data.tel);
+                        LCD4_Set_Cursor(2, 1);
+                        LCD4_Write_String("SMK =   ");
+                        //LCD4_Write_String(g_data.tel);
+                        LCD4_Write_Int(g_data.ppm_smoke);                   
+                break;
+                        
+                case WARNING_LPG:
+                        LCD4_Set_Cursor(1, 1);
+                        LCD4_Write_String("TEL= ");
+                        LCD4_Write_String(g_data.tel);
+                        LCD4_Set_Cursor(2, 1);
+                        LCD4_Write_String("LPG =   ");
+                        //LCD4_Write_String(g_data.tel);
+                        LCD4_Write_Int(g_data.ppm_lpg);      
+                break;
+                
+                case WARNING_TEMP:
+                        LCD4_Set_Cursor(1, 1);
+                        LCD4_Write_String("TEL= ");
+                        LCD4_Write_String(g_data.tel);
+                        LCD4_Set_Cursor(2, 1);
+                        LCD4_Write_String("TMP =   ");
+                        //LCD4_Write_String(g_data.tel);
+                        LCD4_Write_Int(g_data.temp);  
+                break;                
+        }
+ /*       
+        if(warning() == 1){
                 //LCD4_Clear();
                 LCD4_Set_Cursor(1, 2);
                 LCD4_Write_String("!! WARNING !!");
                 LCD4_Set_Cursor(2, 3);
-                LCD4_Write_String(g_data.tel);  
+                //LCD4_Write_String(g_data.tel);
+                LCD4_Write_Int(g_data.temp);                    
         
         }else{
                    //LCD4_Set_Cursor(1, 1);
@@ -600,7 +718,7 @@ void show_mq2_lm35(void){
                 LCD4_Write_String("'C  ");
         }
         
-     
+ */    
         
           _delay_ms(250);        
        
@@ -640,7 +758,7 @@ void state_machine(void){
                         //if(!(g_data.warn))
                          //if(!warning())
                          //if (g_data.warn == 0)
-                         show_mq2_lm35();
+                         main_menu();
                         
                         //g_data.next_menu = MENU_1;
                         //LCD4_Clear();
@@ -650,6 +768,8 @@ void state_machine(void){
                 reset_keypad();
                         while(pass_set());
                         while(tel_set());
+                        max_mq2_set();
+                        max_lm35_set();
                         //eeprom_save();
                         g_data.is_resigter = 1;
                         eeprom_save();
@@ -671,8 +791,8 @@ void state_machine(void){
                         
                         reset_keypad();
                         welcome();
-                        calib_mq2();
-                                       
+                        
+                        calib_mq2();             
                         if((g_data.is_resigter != 1))
                         {
                                 //LCD4_Write_String("not REGIST");
@@ -689,7 +809,7 @@ void state_machine(void){
                                                 break;
 
                                 }
-                                if(i >= 2){
+                                if(i >= 3){
                                         g_data.next_menu = MENU_5;
                                         //reset_keypad();
                                         //in_loop();     
@@ -699,7 +819,7 @@ void state_machine(void){
                                 
                         }
 
-
+                        
                         /*
                         if(g_data.is_resigter){
                                 //device is registered
@@ -747,9 +867,35 @@ void state_machine(void){
 
 }
 
+void set_out_latch(int keypad){
+ 
+        switch(keypad){
+        
+                case 'A':
+                        relay_on();
+                break;
+                
+                case 'B':
+                        relay_off();
+                break;
+                
+                case 'C':
+                        buzzer_on();
+                break;
+                
+                case 'D':
+                        buzzer_off();
+                break;
+        }
+ 
+}
+
+
 void set_state(void){
         
         if(g_data.keypad_ready){
+                g_data.keypad_ready=0;
+                set_out_latch(g_data.keypad_last);
                 
                 switch(g_data.keypad_last){
                 
@@ -764,14 +910,14 @@ void set_state(void){
                         case '3':
                                 g_data.next_menu = MENU_3;       
                         break;
-                        case 'A':
+                        /*case 'A':
                                 buzzer_on();
                                 //g_data.next_menu = MENU_4;       
                         break; 
                         case 'B':
                                 relay_on();
                                 //g_data.next_menu = MENU_5;       
-                        break;                        
+                        break; */                       
                 }
                                    
        }

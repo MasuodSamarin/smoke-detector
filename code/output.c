@@ -9,7 +9,6 @@
 
 
 
-
 void output_init(void){
         OUTPUT_DDR = 0xff;
 }
@@ -26,8 +25,12 @@ void buzzer_on(void){
 }
 
 void buzzer_off(void){
-     
+ 
         BUZZER_PORT &=~ (1<<BUZZER_PIN);
+}
+
+void relay_toggle(void){
+        RELAY_PORT ^= (1<<RELAY_PIN);
 }
 
 void relay_on(void){

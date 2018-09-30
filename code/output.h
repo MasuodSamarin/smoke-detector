@@ -20,6 +20,7 @@ void output_init(void);
 void buzzer_toggle(void);
 void buzzer_on(void);
 void buzzer_off(void);
+void relay_toggle(void);
 void relay_on(void);
 void relay_off(void);
 

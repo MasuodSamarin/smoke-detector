@@ -92,7 +92,7 @@ int pass_set(void);
 int tel_set(void);
 int max_mq2_set(void);
 int max_lm35_set(void);
-void show_mq2_lm35(void);
+void main_menu(void);
 
 void state_machine(void);
 void set_state(void);

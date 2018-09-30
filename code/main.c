@@ -86,7 +86,7 @@ int main(void)
 void keypad_handler(void){
 
         char key = keypadScan();
-        if( key){// && (g_data.keypad_ready)){
+        if(key){// && (g_data.keypad_ready)){
                 g_data.keypad_last = key;
                 g_data.keypad_ready = 1;
                 
@@ -103,10 +103,10 @@ void init_timer(void){
         TIMER_AttachInterrupt(TIMER_0, keypad_handler);
         TIMER_Start(TIMER_0);
         
-        TIMER_Init(TIMER_2, TIMER2_MAX_DELAY);
+/*        TIMER_Init(TIMER_2, 8192);
         TIMER_AttachInterrupt(TIMER_2, warn_handler);
         TIMER_Start(TIMER_2);
-        
+*/       
          
 
         sei();
