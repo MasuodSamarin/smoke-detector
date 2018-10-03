@@ -10,4 +10,4 @@ avr-size --format=avr --mcu=atmega32 smoke.elf
 avrdude -F -V -c stk500 -p m32 -P /dev/ttyUSB0 -b 115200 -U flash:w:smoke.elf
 #avrdude -F -V -c stk500 -p m32 -P /dev/ttyUSB0 -b 115200 -U eeprom:w:smoke.elf
 
-rm *.o *.hex *.elf *~
+#rm *.o *.hex *.elf *~
